@@ -1,0 +1,11 @@
+SELECT C.CustomerName
+FROM 
+(SELECT TMP.CustomerID, SUM(TMP.order_total) as Customer_Order_Amount
+FROM (SELECT OD.OrderID , SUM(P.Price * OD.Quantity) as order_total ,O.CustomerId
+FROM OrderDetails as OD, Products as P, Orders as O
+WHERE OD.productID = P.productID
+and OD.OrderId= O.OrderId
+GROUP BY OD.OrderID) as TMP 
+GROUP BY TMP.CustomerID
+HAVING Customer_Order_Amount> 10000) as final , Customers as C
+WHERE C.CustomerID = final.CustomerId
